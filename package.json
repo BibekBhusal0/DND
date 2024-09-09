@@ -2,7 +2,7 @@
   "name": "widgets-practice",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://bibekbhusal0.github.io/dnd",
+  "homepage": "https://bibekbhusal0.github.io/DND/",
   "type": "module",
   "scripts": {
     "dev": "vite",

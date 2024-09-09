@@ -49,6 +49,9 @@ function Project({ id, title, tasks }: projectType) {
   const addTodoItem = () => {
     dispatch(addTodo({ project_id: id, task: "" }));
   };
+  const deleteThis = () => {
+    dispatch(deleteProject(id));
+  };
   return (
     <Card className="border-2 h-80 border-green-600 p-3">
       <CardHeader justify="between">
@@ -58,6 +61,13 @@ function Project({ id, title, tasks }: projectType) {
             if (e.key === "Enter") {
               e.preventDefault();
               addTodoItem();
+            } else if (
+              (e.key === "Escape" || e.key === "Backspace") &&
+              title.trim() === "" &&
+              tasks.length === 0
+            ) {
+              e.preventDefault();
+              deleteThis();
             }
           }}
           className={cn(transparentInput, "text-3xl")}
@@ -76,12 +86,7 @@ function Project({ id, title, tasks }: projectType) {
           }
         />
         <div className="flex gap-3">
-          <HiTrash
-            className="text-2xl cursor-pointer"
-            onClick={() => {
-              dispatch(deleteProject(id));
-            }}
-          />
+          <HiTrash className="text-2xl cursor-pointer" onClick={deleteThis} />
 
           <LuPlusCircle
             className="text-2xl cursor-pointer"
@@ -158,14 +163,17 @@ export function SortableCheckbox({
 
   return (
     <div
-      className={cn("flex align-top gap-1 group items-start")}
+      className={cn("flex align-top gap-1 group/todo items-start")}
       ref={setNodeRef}
       style={{ ...style }}
       //
     >
       <div className=" w-6 h-full">
         <RxDragHandleDots2
-          className="text-2xl hidden group-hover:block hover:block opacity-45 cursor-grab focus:cursor-grabbing focus:opacity-80"
+          className={cn(
+            "text-2xl opacity-45 cursor-grab focus:cursor-grabbing",
+            "hidden group-hover/todo:block  hover:block"
+          )}
           {...attributes}
           {...listeners}
         />
@@ -181,14 +189,16 @@ export function SortableCheckbox({
           if (e.key === "Enter") {
             e.preventDefault();
             addTodo();
+          } else if (e.key === "Backspace" && task.trim() === "") {
+            handleDelete();
           }
         }}
-        className={cn(transparentInput)}
+        className={cn(transparentInput, "group/input")}
         rows={1}
       />
       <div className="w-6 h-full">
         <HiTrash
-          className="text-xl hidden group-hover:block cursor-pointer"
+          className="text-xl hidden group-hover/todo:block cursor-pointer"
           onClick={handleDelete}
         />
       </div>
