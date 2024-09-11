@@ -1,5 +1,4 @@
 import { Card, CardHeader } from "grommet";
-import { cn } from "../lib/utils";
 import { projectType, todoType } from "../types/todo";
 import { useDispatch } from "react-redux";
 import {
@@ -44,7 +43,7 @@ function Project({ id, title, tasks }: projectType) {
               deleteThis();
             }
           }}
-          className={cn(transparentInput, "text-3xl")}
+          className={`${transparentInput} text-3xl`}
           type="text"
           autoFocus={title.trim() === ""}
           placeholder="Title Here"

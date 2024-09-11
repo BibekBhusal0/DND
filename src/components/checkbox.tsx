@@ -1,6 +1,5 @@
 import { CheckBox } from "grommet";
 import { RxDragHandleDots2 } from "react-icons/rx";
-import { cn } from "../lib/utils";
 import { sortableCheckboxProps } from "../types/todo";
 import { HiTrash } from "react-icons/hi2";
 import { useEffect, useRef } from "react";
@@ -34,19 +33,16 @@ function SortableCheckbox({
       transition={{ ease: "easeInOut" }}
       dragControls={controls}
       dragListener={false}
-      className={cn("flex align-top gap-2 group/todo items-start")}
+      className="flex align-top group/todo items-start gap-2"
       //
     >
-      <div className="w-6 h-full">
+      <div className="w-8 h-full">
         <RxDragHandleDots2
           onPointerDown={(e) => {
             e.preventDefault();
             controls.start(e);
           }}
-          className={cn(
-            "text-2xl opacity-45 cursor-grab focus:cursor-grabbing",
-            "hidden group-hover/todo:block  hover:block"
-          )}
+          className="text-2xl opacity-45 cursor-grab focus:cursor-grabbing hidden group-hover/todo:block  hover:block m-0 p-0"
         />
       </div>
       <CheckBox checked={checked} onChange={handleToggle} />
@@ -64,7 +60,7 @@ function SortableCheckbox({
             handleDelete();
           }
         }}
-        className={cn(transparentInput, "group/input text-lg")}
+        className={`${transparentInput} text-lg`}
         rows={1}
       />
       <div className="w-6 h-full">
