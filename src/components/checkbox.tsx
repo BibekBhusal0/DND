@@ -1,10 +1,12 @@
-import { CheckBox } from "grommet";
-import { RxDragHandleDots2 } from "react-icons/rx";
+// import { CheckBox } from "grommet";
+// import { RxDragHandleDots2 } from "react-icons/rx";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import { sortableCheckboxProps } from "../types/todo";
-import { HiTrash } from "react-icons/hi2";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useRef } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import { transparentInput } from "./todo";
+import Checkbox from "@mui/material/Checkbox";
 
 function SortableCheckbox({
   id,
@@ -37,7 +39,7 @@ function SortableCheckbox({
       //
     >
       <div className="w-8 h-full">
-        <RxDragHandleDots2
+        <DragIndicatorIcon
           onPointerDown={(e) => {
             e.preventDefault();
             controls.start(e);
@@ -45,7 +47,13 @@ function SortableCheckbox({
           className="text-2xl opacity-45 cursor-grab focus:cursor-grabbing hidden group-hover/todo:block  hover:block m-0 p-0"
         />
       </div>
-      <CheckBox checked={checked} onChange={handleToggle} />
+      <Checkbox
+        checked={checked}
+        onChange={handleToggle}
+        //   inputProps={{ 'aria-label': 'controlled' }}
+
+        //
+      />
       <textarea
         ref={textareaRef}
         placeholder="New Todo"
@@ -64,7 +72,7 @@ function SortableCheckbox({
         rows={1}
       />
       <div className="w-6 h-full">
-        <HiTrash
+        <DeleteIcon
           className="text-xl hidden group-hover/todo:block cursor-pointer"
           onClick={handleDelete}
         />

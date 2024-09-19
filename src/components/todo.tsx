@@ -1,4 +1,4 @@
-import { Card, CardHeader } from "grommet";
+// import { Card, CardHeader } from "grommet";
 import { projectType, todoType } from "../types/todo";
 import { useDispatch } from "react-redux";
 import {
@@ -9,10 +9,11 @@ import {
   deleteProject,
   addTodo,
 } from "../redux/todoSlice";
-import { HiTrash } from "react-icons/hi2";
-import { LuPlusCircle } from "react-icons/lu";
+import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { AnimatePresence, Reorder } from "framer-motion";
 import SortableCheckbox from "./checkbox";
+import { Card, CardHeader } from "@mui/material";
 
 export const transparentInput =
   "border-transparent w-full bg-transparent resize-none focus:outline-none";
@@ -59,9 +60,12 @@ function Project({ id, title, tasks }: projectType) {
           }
         />
         <div className="flex gap-3">
-          <HiTrash className="text-2xl cursor-pointer" onClick={deleteThis} />
+          <DeleteIcon
+            className="text-2xl cursor-pointer"
+            onClick={deleteThis}
+          />
 
-          <LuPlusCircle
+          <AddCircleOutlineRoundedIcon
             className="text-2xl cursor-pointer"
             onClick={addTodoItem}
           />
