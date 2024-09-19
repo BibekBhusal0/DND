@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { changeProjectType, todoStateType } from "../types/todo";
+import { changeProjectType, projectType, todoStateType } from "../types/todo";
 
 const initialState: todoStateType = {
   max_id: 1,
@@ -16,13 +16,10 @@ const initialState: todoStateType = {
 };
 
 export const todoSlice = createSlice({
-  name: "theme",
+  name: "todo",
   initialState,
   reducers: {
-    addProject: (
-      state: todoStateType,
-      action: PayloadAction<{ title: string }>
-    ) => {
+    addProject: (state, action: PayloadAction<{ title: string }>) => {
       state.projects.push({
         filtered: false,
         sorted: false,
@@ -33,8 +30,19 @@ export const todoSlice = createSlice({
       });
       state.max_id++;
     },
+    setProjects: (state, action: PayloadAction<projectType[]>) => {
+      const existingProjectsMap = new Map<number, projectType>(
+        state.projects.map((p) => [p.id, p])
+      );
+      action.payload.forEach((project) => {
+        existingProjectsMap.set(project.id, project);
+      });
+      state.projects = Array.from(existingProjectsMap.values());
+
+      state.max_id = Math.max(...state.projects.map((p) => p.max_id));
+    },
     addTodo: (
-      state: todoStateType,
+      state,
       action: PayloadAction<{ project_id: number; task: string }>
     ) => {
       const project = state.projects.find(
@@ -49,11 +57,11 @@ export const todoSlice = createSlice({
         project.max_id++;
       }
     },
-    deleteProject: (state: todoStateType, action: PayloadAction<number>) => {
+    deleteProject: (state, action: PayloadAction<number>) => {
       state.projects = state.projects.filter((p) => p.id !== action.payload);
     },
     deleteTodo: (
-      state: todoStateType,
+      state,
       action: PayloadAction<{ project_id: number; todo_id: number }>
     ) => {
       const project = state.projects.find(
@@ -65,10 +73,7 @@ export const todoSlice = createSlice({
         );
       }
     },
-    changeProject(
-      state: todoStateType,
-      action: PayloadAction<changeProjectType>
-    ) {
+    changeProject(state, action: PayloadAction<changeProjectType>) {
       const project = state.projects.find(
         (p) => p.id === action.payload.project_id
       );
@@ -89,7 +94,7 @@ export const todoSlice = createSlice({
       }
     },
     changeTodo(
-      state: todoStateType,
+      state,
       action: PayloadAction<{
         project_id: number;
         todo_id: number;
@@ -107,7 +112,7 @@ export const todoSlice = createSlice({
       }
     },
     toggleTodo(
-      state: todoStateType,
+      state,
       action: PayloadAction<{ project_id: number; todo_id: number }>
     ) {
       const project = state.projects.find(
@@ -120,7 +125,6 @@ export const todoSlice = createSlice({
         }
       }
     },
-
     toggleSortedFiltered: (
       state,
       action: PayloadAction<{ id: number; type: "sorted" | "filtered" }>
@@ -144,5 +148,6 @@ export const {
   changeTodo,
   toggleTodo,
   toggleSortedFiltered,
+  setProjects,
 } = todoSlice.actions;
 export default todoSlice.reducer;

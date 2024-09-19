@@ -2,10 +2,12 @@ import Project from "./components/todo";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import { addProject } from "./redux/todoSlice";
+import { addProject, setProjects } from "./redux/todoSlice";
 import { Card, CardContent } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { useEffect } from "react";
+import { loadProjects, saveProjects } from "./daxie/todo";
 
 const darkTheme = createTheme({
   palette: {
@@ -16,6 +18,20 @@ const darkTheme = createTheme({
 function App() {
   const { projects } = useSelector((state: RootState) => state.todo);
   const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("fetching");
+      const data = await loadProjects();
+      if (data) {
+        dispatch(setProjects(data));
+      } else {
+        await saveProjects(projects);
+      }
+    };
+    fetchData();
+  }, []);
+
+  console.log(projects);
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
