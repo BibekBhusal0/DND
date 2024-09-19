@@ -7,6 +7,7 @@ import {
   toggleTodo,
   deleteProject,
   addTodo,
+  toggleSortedFiltered,
 } from "../redux/todoSlice";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import { AnimatePresence, Reorder } from "framer-motion";
@@ -17,8 +18,19 @@ import TodoMenu from "./todo-menu";
 export const transparentInput =
   "border-transparent w-full bg-transparent resize-none focus:outline-none";
 
-function Project({ id, title, tasks }: projectType) {
+function Project({ id, title, tasks, filtered, sorted }: projectType) {
   const dispatch = useDispatch();
+
+  var dynamicTasks = [...tasks];
+
+  if (filtered) {
+    dynamicTasks = tasks.filter((t) => !t.checked);
+  } else if (sorted) {
+    dynamicTasks = [
+      ...tasks.filter((t) => !t.checked),
+      ...tasks.filter((t) => t.checked),
+    ];
+  }
 
   const addTodoItem = () => {
     dispatch(addTodo({ project_id: id, task: "" }));
@@ -64,16 +76,26 @@ function Project({ id, title, tasks }: projectType) {
           <IconButton onClick={addTodoItem}>
             <AddCircleOutlineRoundedIcon />
           </IconButton>
-          <TodoMenu />
+          <TodoMenu
+            filtered={filtered}
+            sorted={sorted}
+            handleDelete={deleteThis}
+            handleFilter={() => {
+              dispatch(toggleSortedFiltered({ id, type: "filtered" }));
+            }}
+            handleSort={() =>
+              dispatch(toggleSortedFiltered({ id, type: "sorted" }))
+            }
+          />
         </div>
       </div>
       <div className="overflow-scroll scroll-container py-4 px-0.5 space-y-3 size-full">
         <Reorder.Group
           className="space-y-2"
-          values={tasks.map((t) => t.id)}
+          values={dynamicTasks.map((t) => t.id)}
           onReorder={(newOrder) => {
             const orderedTasks = newOrder
-              .map((id) => tasks.find((task) => task.id === id))
+              .map((id) => dynamicTasks.find((task) => task.id === id))
               .filter((task): task is todoType => task !== undefined);
 
             dispatch(
@@ -85,7 +107,7 @@ function Project({ id, title, tasks }: projectType) {
             );
           }}>
           <AnimatePresence>
-            {tasks.map((task) => (
+            {dynamicTasks.map((task) => (
               <SortableCheckbox
                 handleDelete={() => {
                   dispatch(deleteTodo({ project_id: id, todo_id: task.id }));

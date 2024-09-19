@@ -6,6 +6,9 @@ export interface todoType {
 
 export interface projectType {
   id: number;
+  sorted?: boolean;
+  filtered?: boolean;
+
   title: string;
   tasks: todoType[];
   max_id: number;

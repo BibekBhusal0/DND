@@ -5,6 +5,8 @@ const initialState: todoStateType = {
   max_id: 1,
   projects: [
     {
+      sorted: false,
+      filtered: false,
       id: 1,
       title: "All Tasks",
       tasks: [{ id: 1, task: "Task 1", checked: true }],
@@ -22,6 +24,8 @@ export const todoSlice = createSlice({
       action: PayloadAction<{ title: string }>
     ) => {
       state.projects.push({
+        filtered: false,
+        sorted: false,
         id: state.max_id + 1,
         title: action.payload.title,
         tasks: [],
@@ -70,7 +74,15 @@ export const todoSlice = createSlice({
       );
       if (project) {
         if (action.payload.change_item === "todo") {
-          project.tasks = action.payload.todo;
+          if (project.filtered) {
+            project.tasks = [
+              ...action.payload.todo,
+              ...project.tasks.filter((a) => a.checked),
+            ];
+          } else {
+            project.tasks = action.payload.todo;
+          }
+          project.sorted = false;
         } else {
           project.title = action.payload.title;
         }
@@ -108,6 +120,18 @@ export const todoSlice = createSlice({
         }
       }
     },
+
+    toggleSortedFiltered: (
+      state,
+      action: PayloadAction<{ id: number; type: "sorted" | "filtered" }>
+    ) => {
+      const project = state.projects.find((p) => p.id === action.payload.id);
+      if (project) {
+        project[action.payload.type] = !project[action.payload.type];
+        if (action.payload.type === "sorted") project.filtered = false;
+        if (action.payload.type === "filtered") project.sorted = false;
+      }
+    },
   },
 });
 
@@ -119,5 +143,6 @@ export const {
   changeProject,
   changeTodo,
   toggleTodo,
+  toggleSortedFiltered,
 } = todoSlice.actions;
 export default todoSlice.reducer;
