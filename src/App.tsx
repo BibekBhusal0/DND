@@ -20,7 +20,6 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
-      console.log("fetching");
       const data = await loadProjects();
       if (data) {
         dispatch(setProjects(data));
@@ -31,7 +30,6 @@ function App() {
     fetchData();
   }, []);
 
-  console.log(projects);
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />

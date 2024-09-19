@@ -14,13 +14,24 @@ function SortableCheckbox({
   handleChange,
   handleToggle,
   addTodo = () => {},
+  ref_ = () => ({}),
+  focusPrevious = () => {},
+  focusNext = () => {},
 }: sortableCheckboxProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const controls = useDragControls();
+
+  const ref = useRef<HTMLTextAreaElement>(null);
+
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // Reset height
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust height
+    if (ref_ && ref.current) {
+      ref_(ref.current);
+    }
+  }, [ref_, ref]);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = "auto"; // Reset height
+      ref.current.style.height = `${ref.current.scrollHeight}px`; // Adjust height
     }
   }, [task]);
 
@@ -33,7 +44,7 @@ function SortableCheckbox({
       transition={{ ease: "easeInOut" }}
       dragControls={controls}
       dragListener={false}
-      className="flex align-center group items-center justify-center gap-2 "
+      className="flex align-center group items-start justify-center gap-2 "
       //
     >
       <div className="w-8 h-full">
@@ -48,17 +59,27 @@ function SortableCheckbox({
       </div>
       <Checkbox checked={checked} sx={{ padding: 0 }} onChange={handleToggle} />
       <textarea
-        ref={textareaRef}
+        ref={ref}
         placeholder="New Todo"
         value={task}
         autoFocus={task.trim() === ""}
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+          if (e.key === "Backspace" && task.trim() === "") {
             e.preventDefault();
-            addTodo();
-          } else if (e.key === "Backspace" && task.trim() === "") {
             handleDelete();
+            setTimeout(() => {
+              focusPrevious();
+            }, 100);
+          } else if (["ArrowUp", "Enter", "ArrowDown"].includes(e.key)) {
+            e.preventDefault();
+            if (e.key === "Enter") {
+              addTodo();
+            } else if (e.key === "ArrowUp") {
+              focusPrevious();
+            } else if (e.key === "ArrowDown") {
+              focusNext();
+            }
           }
         }}
         className={`${transparentInput} text-lg`}
@@ -76,4 +97,5 @@ function SortableCheckbox({
     </Reorder.Item>
   );
 }
+
 export default SortableCheckbox;

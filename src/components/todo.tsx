@@ -14,13 +14,15 @@ import { AnimatePresence, Reorder } from "framer-motion";
 import SortableCheckbox from "./checkbox";
 import { Box, IconButton } from "@mui/material";
 import TodoMenu from "./todo-menu";
+import { useRef } from "react";
 
 export const transparentInput =
   "border-transparent w-full bg-transparent resize-none focus:outline-none";
 
 function Project({ id, title, tasks, filtered, sorted }: projectType) {
   const dispatch = useDispatch();
-
+  const taskRefs = useRef<Map<number, HTMLTextAreaElement | null>>(new Map());
+  const titleRef = useRef<HTMLInputElement>(null);
   var dynamicTasks = [...tasks];
 
   if (filtered) {
@@ -32,6 +34,37 @@ function Project({ id, title, tasks, filtered, sorted }: projectType) {
     ];
   }
 
+  const focusPrevious = (currentTodoId: number) => {
+    const currentIndex = dynamicTasks.findIndex(
+      (task) => task.id === currentTodoId
+    );
+    const previousIndex = currentIndex - 1;
+
+    var focusOn: HTMLTextAreaElement | HTMLInputElement | null | undefined =
+      null;
+    if (previousIndex >= 0) {
+      const previousTaskId = dynamicTasks[previousIndex].id;
+      focusOn = taskRefs.current.get(previousTaskId);
+    } else {
+      focusOn = titleRef.current;
+    }
+    // setTimeout(() => {
+    focusOn?.focus();
+    // }, 100);
+  };
+
+  const focusNext = (currentTodoId: number) => {
+    const currentIndex = dynamicTasks.findIndex(
+      (task) => task.id === currentTodoId
+    );
+    const nextIndex = currentIndex + 1;
+
+    if (nextIndex < dynamicTasks.length) {
+      const nextTaskId = dynamicTasks[nextIndex].id;
+      const nextElement = taskRefs.current.get(nextTaskId);
+      nextElement?.focus();
+    }
+  };
   const addTodoItem = () => {
     dispatch(addTodo({ project_id: id, task: "" }));
   };
@@ -44,6 +77,7 @@ function Project({ id, title, tasks, filtered, sorted }: projectType) {
       className="h-80 border-2 border-white overflow-hidden p-4 rounded-md">
       <div className="flex justify-between items-center gap-2 px-3">
         <input
+          ref={titleRef}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -109,9 +143,14 @@ function Project({ id, title, tasks, filtered, sorted }: projectType) {
           <AnimatePresence>
             {dynamicTasks.map((task) => (
               <SortableCheckbox
+                ref_={(el: HTMLTextAreaElement | null) =>
+                  taskRefs.current.set(task.id, el)
+                }
                 handleDelete={() => {
                   dispatch(deleteTodo({ project_id: id, todo_id: task.id }));
                 }}
+                focusPrevious={() => focusPrevious(task.id)}
+                focusNext={() => focusNext(task.id)}
                 handleChange={(val: string) =>
                   dispatch(
                     changeTodo({

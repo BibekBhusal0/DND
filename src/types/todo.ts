@@ -28,4 +28,7 @@ export type sortableCheckboxProps = todoType & {
   handleDelete: () => void;
   handleToggle: () => void;
   addTodo?: () => void;
+  ref_?: (el: HTMLTextAreaElement | null) => {};
+  focusPrevious?: () => void;
+  focusNext?: () => void;
 };
