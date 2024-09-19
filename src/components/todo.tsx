@@ -1,4 +1,3 @@
-// import { Card, CardHeader } from "grommet";
 import { projectType, todoType } from "../types/todo";
 import { useDispatch } from "react-redux";
 import {
@@ -10,10 +9,10 @@ import {
   addTodo,
 } from "../redux/todoSlice";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { AnimatePresence, Reorder } from "framer-motion";
 import SortableCheckbox from "./checkbox";
-import { Card, CardHeader } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import TodoMenu from "./todo-menu";
 
 export const transparentInput =
   "border-transparent w-full bg-transparent resize-none focus:outline-none";
@@ -28,8 +27,10 @@ function Project({ id, title, tasks }: projectType) {
     dispatch(deleteProject(id));
   };
   return (
-    <Card className="border-2 h-80 border-green-600 p-3">
-      <CardHeader justify="between">
+    <Box
+      sx={{ bgcolor: "primary[500]" }}
+      className="h-80 border-2 border-white overflow-hidden p-4 rounded-md">
+      <div className="flex justify-between items-center gap-2 px-3">
         <input
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -60,18 +61,13 @@ function Project({ id, title, tasks }: projectType) {
           }
         />
         <div className="flex gap-3">
-          <DeleteIcon
-            className="text-2xl cursor-pointer"
-            onClick={deleteThis}
-          />
-
-          <AddCircleOutlineRoundedIcon
-            className="text-2xl cursor-pointer"
-            onClick={addTodoItem}
-          />
+          <IconButton onClick={addTodoItem}>
+            <AddCircleOutlineRoundedIcon />
+          </IconButton>
+          <TodoMenu />
         </div>
-      </CardHeader>
-      <div className="overflow-auto scroll-container py-4 px-0.5 space-y-3 size-full">
+      </div>
+      <div className="overflow-scroll scroll-container py-4 px-0.5 space-y-3 size-full">
         <Reorder.Group
           className="space-y-2"
           values={tasks.map((t) => t.id)}
@@ -96,7 +92,11 @@ function Project({ id, title, tasks }: projectType) {
                 }}
                 handleChange={(val: string) =>
                   dispatch(
-                    changeTodo({ project_id: id, todo_id: task.id, task: val })
+                    changeTodo({
+                      project_id: id,
+                      todo_id: task.id,
+                      task: val,
+                    })
                   )
                 }
                 handleToggle={() => {
@@ -110,7 +110,7 @@ function Project({ id, title, tasks }: projectType) {
           </AnimatePresence>
         </Reorder.Group>
       </div>
-    </Card>
+    </Box>
   );
 }
 

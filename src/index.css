@@ -22,14 +22,6 @@
   background: transparent; /* Custom track color */
 }
 
-.scroll-container {
-  transition: box-shadow 0.3s ease;
-}
-
-.scroll-container:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow on hover */
-}
-
 @layer components {
   .flex-center {
     @apply flex justify-center items-center;
